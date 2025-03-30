@@ -1,5 +1,6 @@
 package dao;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -18,8 +19,6 @@ public class MainClass {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		EntityTransaction entityTransaction = entityManager.getTransaction();
 
-		entityTransaction.commit();
-
 		ObjectB b1 = new ObjectB();
 		b1.setName("ulli sagar");
 		b1.setAge(23);
@@ -28,17 +27,36 @@ public class MainClass {
 		b2.setName("suprith");
 		b2.setAge(23);
 
-		ObjectA a = new ObjectA();
-		a.setName("Shankar Narayan");
-		a.setSubject("Core Java");
-		a.setB(Arrays.asList(b1, b2));
+		ObjectA a1 = new ObjectA();
+		a1.setName("Shankar Narayan");
+		a1.setSubject("Core Java");
+		a1.setB(Arrays.asList(b1, b2));
+		
+		
+		
+		ObjectB b3 = new ObjectB();
+		b3.setName("chetan");
+		b3.setAge(23);
+
+		ObjectB b4 = new ObjectB();
+		b4.setName("shashank");
+		b4.setAge(23);
+
+		ObjectA a2 = new ObjectA();
+		a2.setName("Shashank L");
+		a2.setSubject("SQL");
+		a2.setB(Arrays.asList(b3, b4));
 
 //		------------------ Persist ------------------
 
 		entityTransaction.begin();
-		entityManager.persist(a);
+		entityManager.persist(a1);
 		entityTransaction.commit();
 
+		entityTransaction.begin();
+		entityManager.persist(a2);
+		entityTransaction.commit();
+		
 //		------------------ Fetch ------------------
 
 		ObjectA fetchA = entityManager.find(ObjectA.class, "Shankar Narayan");
@@ -50,7 +68,7 @@ public class MainClass {
 //		------------------ Update ------------------
 
 		ObjectA updateA = entityManager.find(ObjectA.class, "Shankar Narayan");
-		List<ObjectB> objectBList = a.getB();
+		List<ObjectB> objectBList = new ArrayList<ObjectB>(a1.getB());
 		Iterator<ObjectB> itr = objectBList.iterator();
 
 		while (itr.hasNext()) {
@@ -65,7 +83,7 @@ public class MainClass {
 		entityTransaction.commit();
 
 		ObjectB updateB = entityManager.find(ObjectB.class, "ulli sagar");
-		updateB.setName("suprith");
+		updateB.setAge(22);
 		entityTransaction.begin();
 		entityManager.merge(updateB);
 		entityTransaction.commit();
@@ -74,17 +92,17 @@ public class MainClass {
 
 		ObjectA deleteA = entityManager.find(ObjectA.class, "Shankar Narayan");
 		entityTransaction.begin();
-		entityManager.merge(deleteA);
+		entityManager.remove(deleteA);
 		entityTransaction.commit();
 
 //		-------------- Child Remove --------------------
-		ObjectA deleteParent = entityManager.find(ObjectA.class, "Shankar Narayan");
+		ObjectA deleteParent = entityManager.find(ObjectA.class, "Shashank L");
 		deleteParent.setB(null);
 		entityTransaction.begin();
-		entityManager.merge(entityManager);
+		entityManager.merge(deleteParent);
 		entityTransaction.commit();
 
-		ObjectB deleteChild = entityManager.find(ObjectB.class, "ulli sagar");
+		ObjectB deleteChild = entityManager.find(ObjectB.class, "chetan");
 		entityTransaction.begin();
 		entityManager.remove(deleteChild);
 		entityTransaction.commit();
